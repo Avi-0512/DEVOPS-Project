@@ -1,0 +1,649 @@
+19-06-2023: intro, setup, ci, custom workspace, shell 
+
+CI - CONTINOUS INTEGRATION (BUILD + TEST) = OLD CODE WITH NEW CODE
+CD - CONTINOUS DELIVERY		: Deployment to production is manual
+CD - CONTINOUS DEPLOYMET	: Deployment to production is automated
+
+ENV:
+DEV	: DEVELOPERS
+TEST	: TESTER
+STAGING	: BEFORE PRODUCTION
+UAT	: CLIENT
+PROD	: USERS (LIVE)
+
+PRE/NON PROD: DEV, TEST, UAT, STATING.
+HIGH AVAILABILTY - MORE THAN ONE SERVER. (ONE -1A, TWO - 1B)
+
+PIPELINE: 
+SERIES OF EVENTS INTERNINKED WITH EACH OTHER.
+STEP BY STEP EXECUTION OF A PROCESS.
+
+JENKINS: PORT - 8080
+
+SETUP:
+STEP-1: GETTING REP0 (jenkins.io -- > downloads -- > Redhat)
+sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
+sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+
+STEP-2: INSTALLING JAVA 11
+amazon-linux-extras install java-openjdk11 -y
+
+STEP-3: INSTALLING GIT JENKINS MAVEN 
+yum install git maven jenkins -y
+
+STEP-4: STARTING THE SERVICE (any service will be on stopped state when its installed)
+systemctl start jenkins
+systemctl status jenkins
+
+STEP-5: CONNECTING TO JENKINS
+Public-ip:8080 -- > browser
+
+
+CUSTOM WORKSPACE: it will gives the output on our desired location.
+
+mkdir -p swiggy/jenkinsbuilds/
+cd /root/swiggy/jenkinsbuilds
+
+jenkins ui -- > jobname -- > configure -- > advance -- > custom workspace -- > /root/swiggy/jenkinsbuilds -- > save
+chown jenkins:jenkins /root
+chown jenkins:jenkins /root/*
+
+HISTORY:
+
+  1    sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
+    2    sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+    3  amazon-linux-extras install java-openjdk11 -y
+    4  java -version
+    5  yum install git maven jenkins -y
+    6  systemctl start jenkins
+    7  systemctl status jenkins
+    8  cat /var/lib/jenkins/secrets/initialAdminPassword
+    9  cd /var/lib/jenkins/workspace/job1
+   10  ll
+   11  java -version
+   12  ll
+   13  ls -ltrh
+   14  pwd
+   15  cd
+   16  ll
+   17  mkdir -p swiggy/jenkinsbuilds
+   18  ll
+   19  pwd
+   20  cd swiggy/jenkinsbuilds/
+   21  pwd
+   22  cd /
+   23  ll
+   24  chown jenkins:jenkins root/
+   25  ll
+   26  cd root/
+   27  ll
+   28  cd /
+   29  chown jenkins:jenkins root/*
+   30  ll
+   31  cd /root/
+   32  ll
+   33  cd swiggy/
+   34  ll
+   35  chown jenkins:jenkins jenkinsbuilds/
+   36  ;;
+   37  ll
+   38  cd jenkinsbuilds/
+   39  pwd
+   40  ll
+   41  history
+=====================================================================================================================================================================
+21-06=2023: PARAMETERS, VARIABLES
+
+Parameters are the inputs given by the user while building.
+
+1. USER DEFINED PARAMETERS: this parameters can be given by user only.
+
+a. Choice parameter: used when we have multiple options to generate a build but need to use only on specific one.
+b. String Parameter: it passess user input in single line.
+c. Multi Line string parameter: it passess user input in Multi line.
+d. File Parameter: It is used to build local files on jenkins.
+e. Boolean Parameter: it is used for yes or no options.
+
+2. VARIABLES: which will store the values & changes as per the time.
+
+a. USER DEFINED VARS: 
+1. LOCAL VARS: it will work inside a job
+
+name=siva
+loc=hyderabad
+echo "hai all my name is $name, $name is comming from $loc"
+
+
+2. GLOBAL VARS: it will work outside of a job
+Dashboard -- > Manage Jenkins -- > System -- > Environment vars -- > add 
+
+b. JENKINS ENVIRONMENT VARS: it can be defined by user
+
+==================================================================
+
+DAY-03: 
+
+CRONJOB: To schedule the works
+
+*	: Minutes
+*	: Hours
+*	: Date
+*	: Month
+*	: day (0=sun)
+
+9:00 am 23 : 0 9 23 6 5
+10:30 pm 22: 30 22 22 6 4
+
+POLLSCM: It will set a time limit if the source code change on that time it will build.
+
+WEBHOOKS: If the developer changes the code then it will build at that point of time.
+
+THROTTLE BUILD: To restric the number of builds for time(M,H,D,W,M)
+
+PASSWORDLESS LOGIN: 
+cd /var/lib/jenkins
+vim config.xml -- > line 7 : true=false -- > :wq
+systemctl restart jenkins
+
+LINKED JOBS: one job is depending on another job.
+
+===================================================
+
+DAY-04:
+
+PIPELINE: 
+Series of events interlinked with each other.
+Step-by-step execution of a process.
+
+TYPES:
+1. SCRIPTED
+2. DECLARTIVE  -- > SHORTCUT: PASSS
+
+
+examples:
+
+pipeline {
+    agent any 
+    
+    stages {
+        stage('one') {
+            steps {
+                sh 'touch file1'
+            }
+        }
+    }
+}
+
+-----------------------
+
+pipeline {
+    agent any 
+    
+    stages {
+        stage('one') {
+            steps {
+                sh 'touch file1'
+            }
+        }
+        stage('two') {
+            steps {
+                sh 'lscpu'
+            }    
+        }
+    }
+}
+
+---------------------------
+
+pipeline {
+    agent any 
+    
+    stages {
+        stage('one') {
+            steps {
+                sh 'touch file1'
+            }
+        }
+        stage('two') {
+            steps {
+                sh 'lscpu'
+            }    
+        }
+        stage('three') {
+            steps {
+                sh 'lsmem'
+            }
+        }
+    }
+}
+
+----------------------------------------------------------------------------
+
+PIPELINE AS A CODE: Executing mutiple actions on single stage.
+
+pipeline {
+    agent any 
+    
+    stages {
+        stage('one') {
+            steps {
+                sh 'touch file1'
+                sh 'lscpu'
+                sh 'lsmem'
+            }
+        }
+    }
+}
+
+
+PIPELINE AS A CODE ON MULTI STAGE:
+
+pipeline {
+    agent any 
+    
+    stages {
+        stage('one') {
+            steps {
+                sh 'touch file1'
+                sh 'lscpu'
+                sh 'lsmem'
+            }
+        }
+        stage('two') {
+            steps {
+                sh 'touch file2'
+                sh 'free'
+            }
+        }
+    }
+}
+
+====================================================================================
+
+PIPELINE AS A CODE OVER SINGLE SHELL:
+
+pipeline {
+    agent any 
+    
+    stages {
+        stage('one') {
+            steps {
+                sh '''
+                lscpu
+                lsmem
+                free
+                '''
+            }
+        }
+    }
+}
+
+====================================================================================================
+
+VARS ON PIPELINE:
+
+pipeline {
+   agent any
+   environment {
+       name = 'raham'
+   }
+   stages {
+       stage('ENV') {
+           steps {
+               sh 'echo "${BUILD_ID}"'
+               sh 'echo "${JOB_NAME}"'
+               sh 'echo "${name}"'
+           }
+       }
+   }
+}
+
+
+pipeline {
+   agent any
+   environment {
+       name = 'raham'
+       loc= 'hyd'
+   }
+   stages {
+       stage('ENV') {
+           steps {
+               sh 'printenv'
+           }
+       }
+   }
+}
+
+===============================================================================
+
+pipeline {
+   agent any
+   
+       parameters {
+           choice(name: 'server', choices: ['a','b','c'], description: "")       }
+   stages {
+       stage('parameters') {
+           steps {
+               echo 'this is my prod stage'
+           }
+       }
+   }
+}
+
+
+
+pipeline {
+   agent any
+       parameters {
+           booleanParam(name: 'db', defaultValue: true, description: "")
+       }
+   stages {
+       stage('parameters') {
+           steps {
+               echo 'this isn my prod stage'
+           }
+       }
+   }
+}
+
+pipeline {
+   agent any
+    environment {
+           name = 'raham'
+       }
+       parameters {
+           string(name: 'person', defaultValue: 'raham shaik', description: "how are you")
+       }
+   stages {
+       stage('parameters') {
+           steps {
+               sh 'echo "${name}"'
+               sh 'echo "${person}"'
+           }
+       }
+   }
+}
+
+======================================================================================================
+
+pipeline {
+    agent any 
+    
+    stages {
+        stage('checkout') {
+            steps {
+                git 'https://github.com/devopsbyraham/jenkins-java-project.git'
+            }
+        }
+        stage('build') {
+            steps {
+                sh 'mvn compile'
+            }
+        }
+        stage('test') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+        stage('package') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+    }
+}
+
+
+HISTORY:
+
+  1  vim jenkins.sh
+    2  sh jenkins.sh
+    3  cd /var/lib/jenkins/
+    4  ll
+    5  vim config.xml
+    6  systemctl restart jenkins.service
+    7  systemctl status jenkins.service
+    8  cd /var/lib/jenkins/workspace/JOB-2/
+    9  ll
+   10  systemctl status jenkins.service
+   11  systemctl restart jenkins.service
+   12  chkconfig on jenkins
+   13  chkconfig --add jenkins
+   14  systemctl status jenkins.service
+   15  cd /var/lib/jenkins/workspace/ci-job/
+   16  ll
+   17  java -version
+   18  yum remove maven* java* -y
+   19  mvn --version
+   20  java -version
+   21  yum install java-1.8.0-openjdk -y
+   22  java -version
+   23  yum install maven -y
+   24  mvn --version
+   25  amazon-linux-extras install java-openjdk11 -y
+   26  mvn --version
+   27  java -version
+   28  update-alternatives --config java
+   29  java -version
+   30  mvn --version
+   31  git -v
+   32  java -version
+   33  mvn --version
+   34  git -v
+   35  systemctl restart jenkins.service
+   36  systemctl status jenkins.service
+   37  cd /var/lib/jenkins/workspace/
+   38  cd ci-job
+   39  ll
+   40  cd target/
+   41  ll
+   42  cd classes
+   43  ll
+   44  ls in/
+   45  ls in/javahome/
+   46  ls in/javahome/myweb/
+   47  ls in/javahome/myweb/controller/
+   48  cd
+   49  history
+   50  java -version
+   51  update-alternatives --config java
+   52  java -version
+   53  update-alternatives --config java
+   54  java -version
+===================================
+day-05: postbuild & master slave
+
+POST-BUILD ACTIONS: the actions which comes after build.
+
+1- always: it will execute all the time 
+
+success cause:
+pipeline {
+    agent any
+    
+    stages {
+        stage("one") {
+            steps {
+                echo "hai all"
+            }
+        }
+    }
+    post {
+        always {
+            echo "hello world"
+        }
+    }
+}
+
+failuer cause:
+pipeline {
+    agent any
+    
+    stages {
+        stage("one") {
+            steps {
+                ech "hai all"
+            }
+        }
+    }
+    post {
+        always {
+            echo "hello world"
+        }
+    }
+}
+
+
+2-success: it will trigger if the build is success
+
+success cause:
+
+pipeline {
+    agent any
+    
+    stages {
+        stage("one") {
+            steps {
+                echo "hai all"
+            }
+        }
+    }
+    post {
+        success {
+            echo "hello world"
+        }
+    }
+}
+
+failuer cause:
+pipeline {
+    agent any
+    
+    stages {
+        stage("one") {
+            steps {
+                ech "hai all"
+            }
+        }
+    }
+    post {
+        always {
+            echo "hello world"
+        }
+    }
+}
+
+
+3-failuer: 
+
+pipeline {
+    agent any
+    
+    stages {
+        stage("one") {
+            steps {
+                echo "hai all"
+            }
+        }
+    }
+    post {
+        failure {
+            echo "hello world"
+        }
+    }
+}
+
+pipeline {
+    agent any
+    
+    stages {
+        stage("one") {
+            steps {
+                ech "hai all"
+            }
+        }
+    }
+    post {
+        failure {
+            echo "hello world"
+        }
+    }
+}
+
+-------------------------------------------------------------------------------------------------------------------------------------
+
+INPUT PARAMETER:
+
+pipeline {
+    agent any
+
+    stages {
+        stage('checkout') {
+            steps {
+                git 'https://github.com/RAHAMSHAIK007/jenkins-java-project.git'
+            }
+        }
+        stage('build') {
+            steps {
+                sh 'mvn compile'
+            }
+        }
+        stage('test') {
+            input {
+                message 'can we test it'
+                ok 'yes'
+            }
+            steps {
+                sh 'mvn test'
+            }
+        }
+        stage('artifact') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+    }
+}
+
+=================================================================================================================
+
+MASTER-SLAVE:
+1. it will distribute the builds
+2. it will reduce load on master
+3. it will reduce the memory useage of master
+
+CREATE A SERVER AND INSTALL JAVA-11
+amazon-linux-extras install java-openjdk11 -y
+
+Dashboard  Manage Jenkins Manage Nodes & clouds -- > New node -- > Name -- > Permanent Agent
+
+Number of executors - no of builds paralelly (3)
+Remote root directory - where your builds will be stored (/tmp)
+Labels - assigning job to slave (swiggy)
+Usage - last options
+Launch method - last option
+host - 172.31.82.90 (privateip)
+Credentials -- > add -- > kind: ssh username with privatekey -- > username: ec2-usrer -- > privatekaey -- > add -- > pem -- > add -- > select ec2-user -- > Host Key Verification Strategy - last option
+
+
+============================
+27-06-2023:
+
+RBAC	: ROLE BASED ACCESS CONTROL
+To restrict the jenkins Control for the users.
+authentication - who can signin
+authorization - who can work
+
+user-1: EXP (rajesh)           user-2:FRESHER (raju)	USER-3: FRESHER
+
+1. USERS: Dashboard -- > Manage Jenkins -- > security -- > Users (crearte 2 users)
+2. PLUGIN: Dashboard -- > Manage Jenkins -- > Plugins -- > Available plugins -- > Role-based Authorization Strategy  -- > install -- > goback to top
+3. Dashboard  -- > Manage Jenkins -- > Security -- > Authorization: Role-Based strategy
+4. ROLES : Dashboard  -- > Manage Jenkins -- > Security -- > Manage and Assign Roles -- >
+   create Fresher & Experience roles and give permissions(EXP: ADMIN, FRE: BUILD AND READ)
+5. ASSIGN ROLES: user-1: EXP           user-2:FRESHER
+
+==============================================================================
+LIST VIEW: USED TO SEPERATE/FILTER THE JOBS.
+MY VIEW: USED TO SHOW THE JOBS WHICH I HAVE PERMISSIONS.
+BUILD PIPELINE VIEW: To show the process of linked jobs -- > PLUGINS -- > AVAILABLE -- > Build Pipeline -- > INSTALL
