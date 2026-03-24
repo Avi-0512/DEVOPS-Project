@@ -1,0 +1,28 @@
+NAGIOS:
+its a monitoring tool used to monitor servers.
+we can monitor the infra.
+it works on client server architecture.
+alternative: Splunk, p&g, elk, liberation, sensa, Zabbix
+ports: 5666, 5667, 5668
+
+why to use:
+old and latest.
+good db. system.
+triggers the mail when severe condition changes.
+renew and updates.
+
+history:
+Ethan gals tad developed the Nagios.
+year: 1999
+initial company: net saint 
+first commercial version: 2009
+Nagios renamed as Nagios core: 2012
+free version and paid also available.
+
+
+ARCHITECTURE:
+its a client server architecture.
+all nodes connected to Nagios main server.
+the nodes info will be store on db.
+on node we need to install agent (NRPE)
+
