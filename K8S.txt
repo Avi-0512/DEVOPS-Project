@@ -1,0 +1,589 @@
+DAY-01: 
+
+K8S:
+
+vim minikunbe.sh
+
+sudo apt update -y
+sudo apt upgrade -y
+sudo apt install curl wget apt-transport-https -y
+sudo curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+sudo curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+sudo mv minikube-linux-amd64 /usr/local/bin/minikube
+sudo chmod +x /usr/local/bin/minikube
+sudo minikube version
+sudo curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+sudo curl -LO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+sudo echo "$(cat kubectl.sha256) kubectl" | sha256sum --check
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+sudo minikube start --driver=docker --force
+
+imperative method: we use commands to create pod
+kubectl run pod1 --image nginx
+kubectl: clt
+run: create 
+pod1: pod name
+nginx: image
+
+kubectl get pods
+kubectl get pod
+kubect1 get po
+kubect1 get po -o wide
+kubectl describe pod pod1 
+
+Declarivte method: we use file (manifest) to create pod
+manifest file is on yaml format.
+
+vim pod.yml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod3
+spec:
+  containers:
+    - name: cont1
+      image: rahamshaik/moviesrepopaytm:latest
+
+kubectl create -f pod.yml
+kubectl delete pod pod3
+
+
+DRAWBACKS:
+1. if a pod is delete we cant get back.
+
+HISTORY:
+1  ll
+    2  mkdir k8s
+    3  cd k8s/
+    4  vim minikube.sh
+    5  sh minikube.sh
+    6  minikube status
+    7  kubectl get node
+    8  kubectl run pod1 --image nginx
+    9  kubectl get pods
+   10  kubectl get pod
+   11  kubectl get po
+   12  kubectl run pod2 --image rahamshaik/moviesrepopaytm:latest
+   13  kubectl get po
+   14  kubectl get po -o wide
+   15  kubectl describe pod pod1
+   16  vim pod.yml
+   17  kubectl create -f pod.yml
+   18  vim pod.yml
+   19  vim pod.yml
+   20  kubectl create -f pod.yml
+   21  kubectl get po
+   22  kubectl describe pod pod3
+   23  kubectl get po
+   24  kubectl delete pod pod3
+   25  kubectl get po
+   26  cat pod.yml
+   27  history
+
+
+========================================================
+
+DAY-03: 24-07-2023: RS, DEPLOYMENT
+
+RS: it will create multiple replicas of same pod
+if we delete one pod it will create another
+by using labels we can identify all the replicas of pods.
+selector will select all the pods with same replicas.
+
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  labels:
+    app: swiggy
+  name: swiggy-rs
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: swiggy
+  template:
+    metadata:
+      labels:
+        app: swiggy
+    spec:
+      containers:
+      - name: cont1
+        image: rahamshaik/moviesrepopaytm:v2
+
+kubectl apply -f filename.yml
+
+kubectl get rs
+kubectl get rs -o wide
+kubectl describe rs swiggy-rs
+
+kubectl get po
+kubectl get po -o wide
+kubectl describe pod podname
+kubectl get po --show-labels
+kubectl delete po -l app=swiggy
+
+DRAWBACK:
+If we update the image replicaset will wont work here.
+
+DEPLOYMENT:
+It is more advance than RS.
+we use this on real deployment.
+
+deployment -- > replicaset -- > pods
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: swiggy
+  name: swiggy-deploy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: swiggy
+  template:
+    metadata:
+      labels:
+        app: swiggy
+    spec:
+      containers:
+      - name: cont1
+        image: nginx
+
+kubectl apply -f filename.yml
+
+kubectl get deploy
+kubectl get deploy -o wide
+kubectl describe deploy swiggy-deploy
+kubectl delete deploy swiggy-deploy
+
+kubectl get po
+kubectl get po -o wide
+kubectl describe pod podname
+kubectl get po --show-labels
+kubectl delete po -l app=swiggy
+
+HISTORY:
+
+ 1  vim .bashrc 
+    2  source .bashrc 
+    3  vim kops.sh
+    4  sh kops.sh 
+    5  ls -a
+    6  vim .aws/config 
+    7  vim .aws/credentials 
+    8  sh kops.sh 
+    9  vim .aws/credentials 
+   10  sh kops.sh 
+   11  cat kops.sh 
+   12  export KOPS_STATE_STORE=s3://heera.k8s.local
+   13  kops validate cluster --wait 10m
+   14  kops get cluster
+   15  kubectl get no
+   16  vim abc.yml
+   17  kubectl api-resources
+   18  kubectl api-resources | grep -i replica
+   19  vim abc.yml 
+   20  cat abc.yml 
+   21  kubectl create -f abc.yml 
+   22  vim abc.yml 
+   23  kubectl create -f abc.yml 
+   24  vim abc.yml 
+   25  kubectl create -f abc.yml 
+   26  cat abc.yml 
+   27  vim abc.yml 
+   28  kubectl create -f abc.yml 
+   29  vim abc.yml 
+   30  kubectl create -f abc.yml 
+   31  vim abc.yml 
+   32  kubectl create -f abc.yml 
+   33  cat abc.yml 
+   34  kubectl delete rs swiggy-rs
+   35  vim abc.yml 
+   36  kubectl create -f abc.yml 
+   37  vim abc.yml 
+   38  kubectl create -f abc.yml 
+   39  vim abc.yml 
+   40  kubectl create -f abc.yml 
+   41  vim abc.yml 
+   42  kubectl create -f abc.yml 
+   43  kubectl get po
+   44  kubectl describe pod swiggy-rs-khghk
+   45  kubectl get po --show labels 
+   46  kubectl get po --show-labels 
+   47  kubectl run pod1 --image nginx
+   48  kubectl get po --show-labels 
+   49  kubectl run pod2 --image nginx
+   50  kubectl run pod3 --image nginx
+   51  kubectl get po --show-labels 
+   52  kubectl delete pod --labels app=swiggy
+   53  kubectl delete pod app=swiggy
+   54  kubectl delete --help
+   55  kubectl delete pod -l app=swiggy
+   56  kubectl get po
+   57  kubectl delete pod pod1
+   58  kubectl get po
+   59  kubectl get rs 
+   60  kubectl get rs -o wide
+   61  kubectl describe rs swiggy-rs
+   62  kubectl get po
+   63  kubectl scale rs/swiggy-rs --replicas=10
+   64  kubectl get po
+   65  kubectl get po -o wide
+   66  kubectl delete pod2 pod3
+   67  kubectl delete pod pod2 pod3
+   68  kubectl get po -o wide
+   69  kubectl scale rs/swiggy-rs --replicas=20
+   70  kubectl get po -o wide
+   71  kubectl scale rs/swiggy-rs --replicas=5
+   72  kubectl get po -o wide
+   73  kubectl delete pod swiggy-rs-khghk
+   74  kubectl delete pod swiggy-rs-2fnf8
+   75  kubectl get po -o wide
+   76  cat abc.yml 
+   77  vim abc.yml 
+   78  kubectl create -f abc.yml 
+   79  kubectl get deploy
+   80  kubectl get deploy -o wide
+   81  kubectl describe deploy swiggy-deploy
+   82  kubectl describe deploy swiggy-deploy | grep -i image
+   83  kubectl edit deploy/swiggy-deploy
+   84  kubectl describe deploy swiggy-deploy | grep -i image
+   85  kubectl edit deploy/swiggy-deploy
+   86  kubectl describe deploy swiggy-deploy | grep -i image
+   87  kubectl get deploy
+   88  kubectl get rs
+   89  kubectl get pod
+   90  kubectl scale deploy/swiggy-deploy --replicas=10
+   91  kubectl get pod -o wide
+   92  cat abc.yml 
+   93  kubectl delete deploy swiggy-deploy
+   94  kubectl get rs
+   95  vim abc.yml 
+   96  kubectl create -f abc.yml 
+   97  kubectl get rs
+   98  kubectl edit rs/swiggy-rs
+   99  vim abc.yml 
+  100  kubectl create -f abc.yml 
+  101  kubectl delete rs swiggy-rs
+  102  kubectl create -f abc.yml 
+  103  kubectl get rs
+  104  kubectl edit rs/swiggy-rs
+  105  kubectl describe rs swiggy-rs | grep -i image
+  106  kubectl get po
+  107  kubectl describe pod swiggy-rs-6x9gc
+  108  kubectl delete rs swiggy-rs
+  109  kubectl describe pod swiggy-rs-6x9gc
+  110  kubectl delete rs swiggy-rs
+  111 
+  112  kubectl delete -h
+  113  kubectl delete --help
+  114  kops get cluster
+  115  kops delete cluster --name mtpk.k8s.local --yes
+  116  history
+
+
+=====================================================================================
+
+DAY-04: 25-07-2023: NAMESPACE, DEAMONSET, KUBECOLOR
+
+NAMESPACE: It is used to divide the cluster to multiple teams.
+dev team= dev namespace 
+test team= test namespace
+it is used to isloate the resources.
+
+default: if we create any resource it will go under default namespace
+kube-node-lease: if we take an object from another node it will store on this ns.
+kube-public: it will make the resource available for all users.
+kube-system: k8s will create its own resources for itself on this ns.
+
+kubectl get po -n default
+kubectl get po -n kube-node-lease
+kubectl get po -n kube-public
+kubectl get po -n kube-system
+
+
+
+kubectl config set-context --current --namespace=dev
+kubectl config view --minify
+kubectl config view --minify | grep -i namespace
+
+
+DAEMOSET: It will create one pod on all each node of the cluster.
+mainly we use if to create fluentd and elasticsearch pods to fetch logs.
+
+
+KUBECOLOR: To apply colors for the k8s
+
+wget https://github.com/hidetatz/kubecolor/releases/download/v0.0.25/kubecolor_0.0.25_Linux_x86_64.tar.gz
+tar -zxvf kubecolor_0.0.25_Linux_x86_64.tar.gz
+./kubecolor
+chmod +x kubecolor
+mv kubecolor /usr/local/bin/
+kubecolor get po
+kubecolor get po -n kube-system
+
+
+HISTORY:
+
+    1  vim .bashrc
+    2  source .bashrc
+    3  vim kops.sh
+    4  sh kops.sh
+    5  vim kops.sh
+    6  sh kops.sh
+    7  cat kops.sh
+    8  export KOPS_STATE_STORE=s3://heera.k8s.local
+    9  kops validate cluster --wait 10m
+   10  kubectl get ns
+   11  kubectl run pod1 --image nginx
+   12  kubectl describe pod pod1
+   13  kubectl get po
+   14  kubectl get po -ns default
+   15  kubectl get po -n default
+   16  kubectl get po -n kube-node-lease
+   17  kubectl get po -n kube-public
+   18  kubectl get po -n kube-system
+   19  kubectl get po
+   20  kubectl get ns
+   21  kubectl create ns dev
+   22  kubectl get ns
+   23  kubectl config set-context --current-namespace=dev
+   24  kubectl config set-context --current --namespace=dev
+   25  kubectl config minify
+   26  kubectl config minify
+   27  kubectl config view --minify
+   28  kubectl config view --minify | grep -i ns
+   29  kubectl config view --minify | grep -i namespace
+   30  kubectl run dev1 --image nginx
+   31  kubectl run dev2 --image nginx
+   32  kubectl run dev3 --image nginx
+   33  kubectl get po
+   34  kubectl create ns test
+   35  kubectl config set-context --current --namespace=test
+   36  kubectl config view --minify | grep -i namespace
+   37  kubectl get po
+   38  kubectl get po -n dev
+   39  kubectl get po -n dev --show-labels
+   40  vim abc.yml
+   41  kubectl create -f abc.yml
+   42  kubectl get rs
+   43  kubectl config set-context --current --namespace=dev
+   44  kubectl get rs
+   45  kubectl get rs -n test
+   46  kubectl get po -n test
+   47  kubectl get po -n test -l app=swiggy
+   48  kubectl describe pod swiggy-rs-h6ghx -n test
+   49  kubectl get ns
+   50  kubectl delete ns test
+   51  kubectl delete ns dev
+   52  kubectl get ns
+   53  kubectl config view --minify | grep -i namespace
+   54  kubectl config set-context --current --namespace=default
+   55  kubectl get ns
+   56  kubectl config view --minify | grep -i namespace
+   57  vim daemonset.yml
+   58  kubectl create -f daemonset.yml
+   59  kubectl get po
+   60  kubectl get po --all
+   61  kubectl get po -n --all
+   62  kubectl ap-resources
+   63  kubectl api-resources
+   64  kubectl get ds
+   65  kubectl get ds -n kube-system
+   66  vim daemonset.yml
+   67  kubectl get ds -n kube-system
+   68  alias kubectl="kubecolor"
+   69  command -v kubecolor >/dev/null 2>&1 && alias kubectl="kubecolor"
+   70  kubectl get po -n kube-system
+   71  kubecolor get po -n kube-system
+   72  vim .bashrc
+   73  source .bashrc
+   74  kubecolor get po -n kube-system
+   75   wget https://github.com/hidetatz/kubecolor/releases/download/v0.0.25/kubecolor_0.0.25_Linux_x86_64.t                                                                                                                                                                                                       ar.gz
+   76  ll
+   77  tar -zxvf kubecolor_0.0.25_Linux_x86_64.tar.gz
+   78  ll
+   79  ./kubecolor
+   80  kubecolor
+   81  chmod +x kubecolor
+   82  mv kubecolor /usr/local/bin/
+   83  ls /usr/local/bin/kubecolor
+   84  kubecolor get po
+   85  kubecolor get po -n kube-system
+   86  histroy
+
+==================================================
+DAY-05: 26-07-2023: SVC (CIP, NP, LB)
+
+SERVICE: it is used to expose an application.
+
+TYPES:
+1. CLUSTERIP: It will work inside the cluster.
+it will not expose to outer world.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: swiggy
+  name: swiggy-deploy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: swiggy
+  template:
+    metadata:
+      labels:
+        app: swiggy
+    spec:
+      containers:
+      - name: cont1
+        image: rahamshaik/trainservice:latest
+        ports:
+          - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sv1
+spec:
+  type: ClusterIP
+  selector:
+    app: swiggy
+  ports:
+    - port: 80
+
+DRAWBACK:
+We cannot use app outside.
+
+2. NODEPORT: It will expose our application in a particular port.
+Range: 30000 - 32767 (in sg we need to give all traffic)
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: swiggy
+  name: swiggy-deploy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: swiggy
+  template:
+    metadata:
+      labels:
+        app: swiggy
+    spec:
+      containers:
+      - name: cont1
+        image: rahamshaik/trainservice:latest
+        ports:
+          - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: abc
+spec:
+  type: NodePort
+  selector:
+    app: swiggy
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 31111
+
+DRAWBACK:
+PORT RESTRICTION.
+
+3. LOADBALACER: It will expose our app and distribute load blw pods.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: swiggy
+  name: swiggy-deploy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: swiggy
+  template:
+    metadata:
+      labels:
+        app: swiggy
+    spec:
+      containers:
+      - name: cont1
+        image: rahamshaik/trainservice:latest
+        ports:
+          - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: abc
+spec:
+  type: LoadBalancer
+  selector:
+    app: swiggy
+  ports:
+    - port: 80
+      targetPort: 80
+
+
+HISTORY:
+
+ 1  cat kops.sh
+    2  aws s3 ls
+    3  sh kops.sh
+    4  cat kops.sh
+    5  export KOPS_STATE_STORE=s3://heera.k8s.local
+    6   kops validate cluster --wait 10m
+    7  kubecolor get po
+    8  vim abc.yml
+    9  vim abc.yml
+   10  kubectl api-resources
+   11  kubectl api-resources | grep -i service
+   12  vim abc.yml
+   13  kubectl create -f abc.yml
+   14  kubecolor get svc
+   15  kubecolor get svc -o wide
+   16  kubecolor describe svc sv1
+   17  ll
+   18  kubecolor delete -f abc.yml
+   19  kubecolor get svc
+   20  kubecolor get deploy
+   21  vim abc.yml
+   22  kubecolor create -f abc.yml
+   23  kubecolor get svc
+   24  kubecolor get deploy
+   25  kubecolor get svc,deploy
+   26  kubecolor get svc,deploy,rs
+   27  kubecolor get deploy
+   28  kubecolor get rs
+   29  kubecolor get po
+   30  kubecolor get po -o wide
+   31  vim abc.yml
+   32  kubecolor apply -f abc.yml
+   33  vim abc.yml
+   34  vim .bashrc
+   35  source .bashrc
+   36  k get po
+   37  vim .bashrc
+   38  source .bashrc
+   39  k get po
+   40  vim .bashrc
+   41  kubecolor delete -f abc.yml
+   42  vim abc.yml
+   43  kubecolor create -f abc.yml
+   44  vim abc.yml
+   45  history
