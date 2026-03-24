@@ -1,0 +1,583 @@
+MONOLITIC: Multiple services on a single server with single db
+MICROSERVICES: Multiple services on Multiple servers with Multiple db
+
+SERVER = CONTAINERS = VM
+
+CONTAINER: It's like a VM without OS.
+IMAGE: It will have os/software & pkg.
+SERVER (AMI) = CONTAINER (image)
+DOCKER: It's a containerization tool.
+
+containerization: the process of packing an application with its dependencies.
+os level of virtualization.
+
+virtualization is Hardware level
+containerization is OS level
+
+INSTALL:
+yum install docker -y
+service start docker
+service status docker
+
+
+COMMANDS:
+docker images: to show a list of images
+docker pull ubuntu: to get ubuntu image
+docker run ubuntu: to create a container
+docker run -it --name cont2 ubuntu: it will create cont2 with interactive mode
+docker ps -a: to show list of containers
+
+OS LEVEL OF VIRTUALIZATION:
+cat /etc/os-release
+apt update -y
+apt upgrade -y
+
+apt = package manager = advance pacakger tool
+
+touch file{1..5}
+apt install apache2 maven -y
+ctrl p q: to exit from container
+
+
+HISTORY:
+  1  yum install docker -y
+    2  service start docker
+    3  service  docker start
+    4  service  docker status
+    5  docker images
+    6  docker pull ubuntu
+    7  docker images
+    8  df -h
+    9  docker pull amazonlinux2
+   10  docker pull amazonlinux
+   11  docker images
+   12  docker pull jenkins/jenkins:lts
+   13  docker images
+   14  docker run ubuntu
+   15  docker ps -a
+   16  docker run --name cont1 ubuntu
+   17  docker ps -a
+   18  docker run -it --name cont2 ubuntu
+   19  docker ps -a
+   20  docker images
+   21  docker commit c5589fa2f54a swiggy
+   22  docker images
+   23  docker run -it --name cont3 swiggy
+   24  docker images
+   25  docker run -it --name cont4 amazonlinux
+   26  history
+
+=======================================================
+11-07-2023: day 02
+
+DOCKER FILE:
+It is an automated way to create images.
+it will have components, which are in capital letters.
+in Dockerfile D must be capital.
+
+BUILD -- > To run the docker file
+command: docker build -t image_name path_of_Dockerfile
+
+FROM: base image
+RUN: executes Linux commands (image creation)
+CMD: executes Linux commands (container creation)
+ENTRYPOINT: It will override the command.
+COPY: copies the local file to container
+ADD: copies the internet file to container (or) extract the files
+WORKDIR: Opens the required folder 
+ENV: To pass the env variables (inside container)
+ARGS: To pass the env variables (outside container)
+labels: to attach label to conatiner
+
+
+EXAMPLE-1:
+FROM ubuntu
+RUN apt update -y
+RUN apt install apache2 -y
+RUN apt install maven -y
+RUN apt install mysql-server -y
+
+EXAMPLE-2:
+FROM ubuntu
+RUN apt update -y
+RUN apt install apache2 -y
+RUN apt install maven -y
+RUN apt install mysql-server -y
+CMD apt install default-jdk -y
+
+EXAMPLE-3:
+FROM ubuntu
+RUN apt update -y
+RUN apt install apache2 -y
+RUN apt install maven -y
+RUN apt install mysql-server -y
+COPY abc.txt /tmp
+COPY raham.txt /tmp
+ADD https://dlcdn.apache.org/maven/maven-3/3.8.8/binaries/apache-maven-3.8.8-bin.tar.gz /tmp
+
+EXAMPLE-4:
+FROM ubuntu
+RUN apt update -y
+RUN apt install apache2 -y
+RUN apt install maven -y
+RUN apt install mysql-server -y
+COPY abc.txt /tmp
+COPY raham.txt /tmp
+ADD https://dlcdn.apache.org/maven/maven-3/3.8.8/binaries/apache-maven-3.8.8-bin.tar.gz /tmp
+WORKDIR /tmp
+ENV name raham
+LABEL email rahamshaik007
+
+HISTORY:
+
+  1  yum install docker -y
+    2  service start docker
+    3  service docker start
+    4  service docker status
+    5  docker images
+    6  docker pull ubuntu
+    7  docker images
+    8  docker pull amazonlinux
+    9  docker images
+   10  docker run -it --name cont1 ubuntu
+   11  docker ps -a
+   12  docker commit cont1 swiggy
+   13  docker run -it --name cont2 swiggy
+   14  vim Dockerfile
+   15  docker build -t swiggy:v2 .
+   16  vim Dockerfile
+   17  docker build -t swiggy:v2 .
+   18  docker images
+   19  docker run -it --name cont3 swiggy:v2
+   20  docker images
+   21  vim Dockerfile
+   22  docker build -t swiggy:v2 .
+   23  docker images
+   24  docker run -it --name cont4 swiggy:v2
+   25  vim Dockerfile
+   26  docker build -t swiggy:v2 .
+   27  docker run -it --name cont5 swiggy:v2
+   28  vim Dockerfile
+   29  docker build -t swiggy:v2 .
+   30  docker run -it --name cont6 swiggy:v2
+   31  ll
+   32  vim abc.txt
+   33  ll
+   34  vim Dockerfile
+   35  docker build -t swiggy:v2 .
+   36  docker run -it --name cont7 swiggy:v2
+   37  docker ps
+   38  docker ps -a
+   39  vim Dockerfile
+   40  docker build -t swiggy:v2 .
+   41  docker run -it --name cont8 swiggy:v2
+   42  ll
+   43  vim raham.txt
+   44  ll
+   45  vim Dockerfile
+   46  docker build -t swiggy:v2 .
+   47  docker run -it --name cont9 swiggy:v2
+   48  vim Dockerfile
+   49  docker build -t swiggy:v2 .
+   50  docker run -it --name cont10 swiggy:v2
+   51  vim Dockerfile
+   52  docker build -t swiggy:v2 .
+   53  docker run -it --name cont11 swiggy:v2
+   54  docker ps
+   55  docker ps -a
+   56  docker ps
+   57  docker inspect cont11
+   58  cat Dockerfile
+   59  ll
+   60  rm -rf *
+   61  vim Dockerfile
+   62  cat Dockerfile
+   63  vim index.html
+   64  docker build -t devops:v1 .
+   65  docker images
+   66  docker run -it --name appcont -p 80:80 devops:v1
+   67  docker run -d --name appcont1 -p 81:80 devops:v1
+   68  docker ps
+   69  docker run -d --name appcont2 -p 80:82 devops:v1
+   70  docker run -itd --name appcont3 -p 82:80 devops:v1
+   71  docker run -itd --name appcont4 -p 80:85 devops:v1
+   72  docker logs appcont4
+   73  docker ps
+   74  systemctl restart docker
+   75  docker ps -a -q
+   76  docker stop $(docker ps -a -q)
+   77  docker rm $(docker ps -a -q)
+   78  docker ps -a
+   79  docker run -itd --name cont1 -p 80:80 devops:v1
+   80  docker run -itd --name cont2 -p 81:80 devops:v1
+   81  docker run -itd --name cont2 -p 82:80 devops:v1
+   82  docker run -itd --name cont3 -p 83:80 devops:v1
+   83  history
+
+
+DEPLOYMENT:
+
+Dockerfile
+FROM ubuntu
+RUN apt-get update -y
+RUN apt-get install apache2 -y
+COPY index.html /var/www/html/
+CMD ["/usr/sbin/apachectl", "-D", "FOREGROUND"]
+
+CODE:
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {font-family: Arial, Helvetica, sans-serif;}
+
+/* Full-width input fields */
+input[type=text], input[type=password] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+/* Set a style for all buttons */
+button {
+  background-color: #04AA6D;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+/* Extra styles for the cancel button */
+.cancelbtn {
+  width: auto;
+  padding: 10px 18px;
+  background-color: #f44336;
+}
+
+/* Center the image and position the close button */
+.imgcontainer {
+  text-align: center;
+  margin: 24px 0 12px 0;
+  position: relative;
+}
+
+img.avatar {
+  width: 40%;
+  border-radius: 50%;
+}
+
+.container {
+  padding: 16px;
+}
+
+span.psw {
+  float: right;
+  padding-top: 16px;
+}
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  padding-top: 60px;
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
+  border: 1px solid #888;
+  width: 80%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button (x) */
+.close {
+  position: absolute;
+  right: 25px;
+  top: 0;
+  color: #000;
+  font-size: 35px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: red;
+  cursor: pointer;
+}
+
+/* Add Zoom Animation */
+.animate {
+  -webkit-animation: animatezoom 0.6s;
+  animation: animatezoom 0.6s
+}
+
+@-webkit-keyframes animatezoom {
+  from {-webkit-transform: scale(0)} 
+  to {-webkit-transform: scale(1)}
+}
+  
+@keyframes animatezoom {
+  from {transform: scale(0)} 
+  to {transform: scale(1)}
+}
+
+/* Change styles for span and cancel button on extra small screens */
+@media screen and (max-width: 300px) {
+  span.psw {
+     display: block;
+     float: none;
+  }
+  .cancelbtn {
+     width: 100%;
+  }
+}
+</style>
+</head>
+<body>
+
+<h2>DevOps By Raham V:2.0</h2>
+
+<button onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Login</button>
+
+<div id="id01" class="modal">
+  
+  <form class="modal-content animate" action="/action_page.php" method="post">
+    <div class="imgcontainer">
+      <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
+      <img src="img_avatar2.png" alt="Avatar" class="avatar">
+    </div>
+
+    <div class="container">
+      <label for="uname"><b>Username</b></label>
+      <input type="text" placeholder="Enter Username" name="uname" required>
+
+      <label for="psw"><b>Password</b></label>
+      <input type="password" placeholder="Enter Password" name="psw" required>
+        
+      <button type="submit">Login</button>
+      <label>
+        <input type="checkbox" checked="checked" name="remember"> Remember me
+      </label>
+    </div>
+
+    <div class="container" style="background-color:#f1f1f1">
+      <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
+      <span class="psw">Forgot <a href="#">password?</a></span>
+    </div>
+  </form>
+</div>
+
+<script>
+// Get the modal
+var modal = document.getElementById('id01');
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+</script>
+
+</body>
+</html>
+
+====================
+
+DAY-04: 13-07-2023 COMPOSE
+
+DOCKER COMPOSE:
+
+It is a tool used to build, run and ship multiple containers for application.
+It is used to create multiple containers in a single host.
+It used the YAML file to manage multi containers as a single service.
+The Compose file provides a way to document and configure all of the application’s service dependencies (databases, queues, caches, web service APIs, etc). 
+
+COMPOSE/DOCKER COMPOSE FILE: (yml=yaml)
+We provide details about services.
+ex: image, port, volume ----
+
+INSTALLATION:
+
+sudo curl -L "https://github.com/docker/compose/releases/download/1.29.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+ls /usr/local/bin/
+sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+docker-compose version
+
+stop vs kill:
+it will wait a few sec to stop the running process
+it won't wait to stop the process 
+
+WORKING:
+
+version: '3'
+services:
+  movies:
+    image: paymovies:v1
+    ports:
+      - "90:80"
+  train:
+    image: paytrain:v1
+    ports:
+      - "91:80"
+  dth:
+    image: paydth:v1
+    ports:
+      - "92:80"
+  recharge:
+    image: payrecharge:v1
+    ports:
+      - "93:80"
+
+
+HISTORY:
+ 1  docker images
+    2  docker run -itd --name movies -p 90:80 paymovies:v1
+    3  LL
+    4  ll
+    5  sudo curl -L "https://github.com/docker/compose/releases/download/1.29.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/                                                                                                                                                                                                                                       local/bin/docker-compose
+    6  ls /usr/local/bin/
+    7  sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+    8  sudo chmod +x /usr/local/bin/docker-compose
+    9  docker-compose version
+   10  docker ps
+   11  docker stop 272acc16526a
+   12  docker start 272acc16526a
+   13  docker kill 272acc16526a
+   14  docker rm movies
+   15  docker ps -a
+   16  vim docker-compose.yml
+   17  ll
+   18  docker-compose up -d
+   19  docker ps
+   20  vim docker-compose.yml
+   21  ll
+   22  vim index.html
+   23  docker images
+   24  docker build -t paytrain:v1 .
+   25  docker images
+   26  vim docker-compose.yml
+   27  docker-compose up -d
+   28  docker ps
+   29  vi index.html
+   30  docker build -t paydth:v1 .
+   31  docker images
+   32  vim docker-compose.yml
+   33  docker-compose up -d
+   34  docker ps
+   35  vim index.html
+   36  ll
+   37  docker run -t payrecharge:v1 .
+   38  docker build -t payrecharge:v1 .
+   39  docker images
+   40  vim docker-compose.yml
+   41  docker-compose up -d
+   42  docker ps
+   43  docker-compose down
+   44  docker ps
+   45  docker-compose up -d
+   46  docker ps
+   47  docker run cont1
+   48  docker run -d --name cont1 ubuntu
+   49  docker run -d --name cont2 ubuntu
+   50  docker run -d --name cont3 ubuntu
+   51  docker ps
+   52  docker ps -a
+   53  docker-compose ps -a
+   54* docker p
+   55  docker-compose images
+   56  docker images
+   57  docker-compose logs
+   58  docker-compose events
+   59  vim docker-compose.yml
+   60  docker-compose stop
+   61  vim docker-compose.yml
+   62  docker-compose stop
+   63  vim docker-compose.yml
+   64  docker-compose stop
+   65  vim docker-compose.yml
+   66  docker ps
+   67  docker kill 2932b0073234
+   68  docker ps
+   69  docker-compose up -d
+   70  docker ps
+   71  cat docker-compose.yml
+
+================================================================================
+17-07-2023: Docker swarm, docker hub
+
+  1  docker swarm init --advertise-addr 172.31.27.75
+    2  docker node ls
+    3  docker ps -a
+    4  docker run -itd --name cont1 ubuntu 
+    5  vim Dockerfile
+    6  vim index.html
+    7  docker build -t img:v1 .
+    8  docker images
+    9  docker tag img:v1 rahamshaik/rahamnewapp
+   10  docker images
+   11  docker push rahamshaik/rahamnewapp
+   12  docker login 
+   13  docker push rahamshaik/rahamnewapp
+   14  docker service create --name raham --replicas 6 --publish 80:80 rahamshaik/rahamnewapp:latest
+   15  docker ps -a
+   16  docker service ls
+   17  docker service raham ps 
+   18  docker service ps raham
+   19  docker service ls
+   20  vim index.html 
+   21  docker build -t image:v2 .
+   22  docker images
+   23  docker tag img:v2 rahamshaik/rahamnewapp
+   24  docker tag image:v2 rahamshaik/rahamnewapp
+   25  docker images
+   26  docker push rahamshaik/rahamnewapp
+   27  docker service create --name raham2 --replicas 5 --publish 81:80 rahamshaik/rahamnewapp:latest
+   28  docker service ls
+   29  docker service raham2 scale=10
+   30  docker service scale raham2=10
+   31  docker service ls
+   32  docker service scale raham2=20
+   33  docker service scale raham2=10
+   34  docker service ps raham2
+   35  docker service logs raham2
+   36  docker node ls
+   37  docker node rm joe5t7e970tntz2phruzoeukc
+   38  docker node ls
+   39  docker ps
+   40  docker top cb2f4997df2d
+   41  docker ps -a
+   42  docker stop $(docker ps -a -q)
+   43  docker ps -a
+   44  docker service rm raham
+   45  docker service rm raham2
+   46  docker ps -a
+   47  docker run -it --name jenkins -p 8080:8080 jenkins/jenkins:lts
+   48  docker pull tomcat 
+   49  yum install docker -y
+   50  systemctl start docker
+   51  systemctl status docker
+   52  hostnamectl set-hostame manager
+   53  hostnamectl set-hostname manager
+   54  sudo -i
