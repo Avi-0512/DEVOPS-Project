@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Digital Watch</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="watch-shell">
+    <div class="scanline"></div>
+    <div class="glow-ring"></div>
+
+    <div class="watch-screen">
+
+      <!-- Date Row -->
+      <div class="date-row">
+        <span id="day-name"></span>
+        <span class="dot-sep">·</span>
+        <span id="date-str"></span>
+      </div>
+
+      <!-- Main Time Display -->
+      <div class="time-display">
+        <div class="time-group">
+          <span class="time-label">HH</span>
+          <span class="time-value" id="hh">00</span>
+        </div>
+        <div class="colon-wrap">
+          <span class="colon" id="colon1">:</span>
+        </div>
+        <div class="time-group">
+          <span class="time-label">MM</span>
+          <span class="time-value" id="mm">00</span>
+        </div>
+        <div class="colon-wrap">
+          <span class="colon" id="colon2">:</span>
+        </div>
+        <div class="time-group">
+          <span class="time-label">SS</span>
+          <span class="time-value seconds-val" id="ss">00</span>
+        </div>
+        <div class="ampm-wrap">
+          <span id="ampm">AM</span>
+        </div>
+      </div>
+
+      <!-- Progress bar for seconds -->
+      <div class="seconds-bar-wrap">
+        <div class="seconds-bar" id="seconds-bar"></div>
+      </div>
+
+      <!-- Bottom row -->
+      <div class="bottom-row">
+        <div class="timezone-tag">IST · UTC+5:30</div>
+        <div class="ms-counter" id="ms">000</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- jQuery (required by the original clockRotation code) -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="clock.js"></script>
+</body>
+</html>
